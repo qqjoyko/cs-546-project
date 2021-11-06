@@ -143,6 +143,7 @@ Here's the table of `profile` field:
 3. We will also initialize the `jobs` field to be empty, and its value will be added later by users' operations.
 
   Here's one example of `jobs`:
+  
   ```json
   "jobs": [{"job_id":"7b7997a2-c0d2-4f8c-b27a-6a1d4b5b6310", 
   "applicant_id": ["7b7997a2-c0d2-4f8c-b27a-65412b5b6310", 
