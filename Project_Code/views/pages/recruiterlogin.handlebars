@@ -1,0 +1,30 @@
+<div id="recruiterLogin" aria-labelledby="Login">
+    <div class="form-title text-center">
+       <h4>Recruiter Login</h4>
+    </div>
+    <div class="d-flex flex-column text-center">
+        {{#if mainerr}}
+        <div class="error">{{message}}</div>
+        {{/if}}
+        <form action="/recruiters/login" method="post" id="recloginform">
+            <div class="form-group">
+                {{#if emailerr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <input type="email" name="email" id="recAuthEmail" class="form-control" placeholder="Your email address" aria-placeholder="Your email address" required>
+            </div>
+            <div class="form-group">
+                {{#if pwderr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <input type="password" name="password" id="recAuthPwd" class="form-control" placeholder="Password" aria-placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="recRememberSession"></input>
+                <label for="rememberSession">Remember Me</label>
+            </div>
+            <button type="submit" id="recloginsubmit" class="col-12 btn btn-dark btn-round">Login</button>
+        </form>
+    </div>
+    <div class="signup-section text-center">Not a member yet? <a href="/recruiters/signup" class="text-info" id="recruiterSignupBtn"> Sign Up</a>.</div>
+</div>

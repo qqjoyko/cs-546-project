@@ -1,0 +1,34 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src='/public/script/applied_job.js'></script>
+{{#if errorclass }}
+<marquee>
+    <p class="not-found">Please Login first !!! </p>
+</marquee>
+{{/if}}
+
+{{#if jobFound}}
+<input type="text" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." title="Type in a term">
+<ul id='myJobList'>
+    {{#each jobs}}
+    <li>
+        {{!-- <h2>{{@index}}</h2> --}}
+        <h3>{{title}}</h3>
+        <p>
+            Type : {{type}} <br>
+            Location : {{location}}<br>
+            Job Summary : {{summary}}<br>
+        </p>
+        <button onclick="window.location.href='/jobs/id/{{unique}}'" class="delete btn-primary">Read more</button>
+        <button type="button" class="delete btn-primary"
+                onclick="cancel({{_id}})">cancel</button>
+    </li>
+    {{/each}}
+</ul>
+
+{{/if}}
+
+{{#if nullJob}}
+
+<p>{{message}}</p>
+
+{{/if}}

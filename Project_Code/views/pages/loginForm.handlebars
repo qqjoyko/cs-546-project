@@ -1,0 +1,23 @@
+<script> document.title = 'Login in' </script>
+<h1>Login in</h1>
+<main class = "main1">
+
+<form id="login-form" action="/login" method="POST" >
+    <label class = "label1">
+      email
+    </label>
+      <input type="text" name="username" placeholder="" />
+    <label class = "label1">
+      <br/>password
+    </label>
+      <input type="password" name="password" placeholder="" />
+    <label class = "label1">
+      <br/>
+    </label>
+      <input type="submit" value="Login in" class="search-button"/>
+</form>
+<a href="/signup"  class = "jump" >Need to register? Click here to sign-up</a>
+</main>
+{{#if error}}
+    <p class = 'form-error'>{{message}}</p>
+{{/if}}

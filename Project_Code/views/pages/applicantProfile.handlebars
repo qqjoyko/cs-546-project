@@ -1,0 +1,118 @@
+<section class="section profile-section" id="userProfile">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                {{!-- <img src="{{user.profile.photo}}"></img> --}}
+            </div>
+            <div class="col-6">
+                <h2>Hello {{user.firstname}}{{user.lastname}}</h2>
+                {{#if newUser}}
+                <h6>For your better experience, please complete your personal information first</h6>
+                {{else}}
+                <h6>Welcome back</h6>
+                {{/if}}
+            </div>
+        </div>
+        {{#if newUser}}
+        <div class="row createprofilebtn">
+            <div class="col">
+                <button type="button" class="btn btn-danger" id="recCreateProfileBtn"
+                    onclick="location.href='/users/profile/';">Create
+                    Profile</button>
+            </div>
+        </div>
+        {{else}}
+        <div class="row editprofilebtn">
+            <div class="col">
+                <button type="button" class="btn btn-primary" id="recEditProfileBtn"
+                    onclick="location.href = '/users/profile/';">EditProfile </button>
+            </div>
+        </div>
+        <div class="row profile-section">
+            <div class="col">
+                <p>Gender: {{user.profile.gender}}</p>
+                <p>City: {{user.profile.city}}</p>
+                <p>State: {{user.profile.state}}</p>
+            </div>
+        </div>
+        <div class="row experience-section">
+            <div class="col">
+                <p>Experience:</p>
+                {{#each user.profile.experience}}
+                <div class="container">
+                    <ul>
+                        <li>CompanyName: {{companyName}} <br>
+                            Title: {{title}} <br>
+                            EmploymentType: {{employmentType}} <br>
+                            StartDate: {{startDate}} <br>
+                            EndDate: {{endDate}}</li>
+                    </ul>
+                </div>
+                {{/each}}
+                <p>Education: </p>
+                {{#each user.profile.education}}
+                <div class="container">
+                    <ul>
+                        <li>School: {{school}}<br>
+                            Major: {{major}}<br>
+                            Degree: {{degree}}<br>
+                            StartDate: {{startDate}}<br>
+                            EndDate: {{endDate}}</li>
+                    </ul>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="row about-section">
+            <div class="col">
+                <p>Skills: {{user.profile.skills}}</p>
+                <p>Languages: {{user.profile.languages}}</p>
+                <p>Tags: {{user.profile.tags}}</p>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
+    <button class="btn btn-primary" type="button" onclick="location.href = '/users/resume';">Add Resume</button>
+
+    {{#if resumeError}}
+    <p class="error">{{resumeError}}</p>
+    {{/if}}
+
+    <h2>Your Resumes</h2>
+    {{#if resumes}}
+    {{#each resumes}}
+    <ul id='resumeList'>
+        <div class='resumeList'> <a href="/users/resume/{{this}}" target="_blank">resume{{math @index "+" 1}}.pdf</a>
+            <button type="button" value={{this}} class="delete btn-primary"
+                onclick="deleteResume(this.value)">delete</button>
+        </div>
+    </ul>
+    {{/each}}
+    {{/if}}
+
+    <button class="btn btn-primary" type="button" onclick="location.href = '/users/favor';">Arrange Favorite
+        Jobs</button>
+
+    <button class="btn btn-primary" type="button" onclick="location.href = '/users/apply';">Arrange Applied
+        Jobs</button>
+    {{!-- <div class="row job-section">
+        <div class="accordion" id="job-accordion">
+            <h2>Applied Jobs:</h2>
+            {{#each jobs}}
+            <div class="accordion-item">
+                <h4 class="accordion-header" id="jobheading{{@index}}">
+                    Job titles,{{_id}},{{status}},{{title}}
+                </h4>
+                {{/each}}
+            </div>
+        </div>
+    </div> --}}
+</section>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+    integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+    crossorigin="anonymous"></script>
+<script src="../../public/script/userProfile.js"></script>

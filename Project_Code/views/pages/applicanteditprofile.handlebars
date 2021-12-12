@@ -1,0 +1,121 @@
+<div id="userProfileEditCreate" aria-labelledby="userCreateEditProfile">
+    <div class="form-title text-center">
+       <h4>{{title}} Profile</h4>
+    </div>
+    <div class="d-flex flex-column text-center">
+        {{#if mainerr}}
+        <div class="error">{{message}}</div>
+        {{/if}}
+        <p>basic information</p>
+        <div id = "dumb" hidden>{{recid}}</div>
+        <form action="/users/profile/" method="{{method}}" id="userBase" autocomplete="off">
+            <div class="form-group">
+                {{#if genErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <div id = "baError"></div>
+                <label for="userGender" class="col-form-label">Gender: </label>
+                <select name="userGender" id = "userGender">
+                <option value="M" selected>Male</option>
+                <option value="F">Female</option>
+                <option value="U">unwilling to tell</option>
+                </select> <br/>
+            </div>
+            <div class="form-group">
+                {{#if cityErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <label for="userCity" class="col-form-label">City: </label>
+                <input type="text" name="city" id="userCity" class="form-control" placeholder="Hoboken" aria-placeholder="City">
+            </div>
+            <div class="form-group">
+                {{#if stateErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <label for="state" class="col-form-label">State: </label>
+                <input type="text" name="state" id="state" class="form-control" placeholder="New Jersey" aria-placeholder="State">
+                <button type="submit" id="baSubmit" class="col-12 btn btn-dark btn-round">Apply</button>
+            </div>
+        </form>
+    </div>
+    <div class = "exRevise">
+        <p>experience</p>
+        <ol id="preEx"></ol>
+        <form action="/users/profile/" method="{{method}}" id="userEx" autocomplete="off">
+            {{#if exErr}}
+                <div class="error">{{message}}</div>
+            {{/if}}
+                <div id = "exError"></div>
+                <label for="title" class="col-form-label">title: </label>
+                <input type="text" name="title" id="title" class="form-control" placeholder="software engineering" aria-placeholder="title" required>
+                
+                <label for="employmentType" class="col-form-label">employmentType: </label>
+                <select name="employmentType" id = "employmentType">
+                <option value="full time" selected>full time</option>
+                <option value="part time">part time</option>
+                </select> <br/>
+                <label for="companyName" class="col-form-label">companyName: </label>
+                <input type="text" name="companyName" id="companyName" class="form-control" placeholder="Apple" aria-placeholder="companyName" required>
+                <label for="startDateEx" class="col-form-label">startDate: </label>
+                <input type="date"  name="startDateEx" id="startDateEx" class="form-control" required>
+                <label for="endDate" class="col-form-label">endDate: </label>
+                <input type="date"  id="endDate" class="form-control" required>
+                <button type="submit" id="exSubmit" class="col-12 btn btn-dark btn-round">Add</button>
+        </form>
+    </div>
+    <div class = "eduRevise">
+    <br/>
+    <p>education</p>
+    <ol id="preEdu"></ol>
+    <form action="/users/profile/" method="{{method}}" id="userEdu" autocomplete="off">
+        {{#if eduErr}}
+            <div class="error">{{message}}</div>
+        {{/if}}
+            <div id = "eduError"></div>
+            <label for="school" class="col-form-label">school: </label>
+            <input type="text" name="school" id="school" class="form-control" placeholder="SIT" aria-placeholder="school" required>
+            <label for="major" class="col-form-label">major: </label>
+            <input type="text" name="major" id="major" class="form-control" placeholder="CS" aria-placeholder="major" required>
+            <label for="degree" class="col-form-label">degree: </label>
+            <input type="text" name="degree" id="degree" class="form-control" placeholder="master" aria-placeholder="degree" required>
+
+            <label for="startDateEdu" class="col-form-label">startDate: </label>
+            <input type="date"  name="startDateEdu" id="startDateEdu" class="form-control" required>
+            <label for="endDateEdu" class="col-form-label">endDate: </label>
+            <input type="date"  id="endDateEdu" class="form-control" required>
+            <button type="submit" id="eduSubmit" class="col-12 btn btn-dark btn-round">Add</button>
+    </form>
+    </div>
+    <div class = "skRevise">
+    <br/>
+    <p>skills</p>
+    <ol id="preSk"></ol>
+    <form action="/users/profile/" method="{{method}}" id="userSk" autocomplete="off">
+        {{#if skErr}}
+            <div class="error">{{message}}</div>
+        {{/if}}
+            <div id = "skError"></div>
+            <label for="skills" class="col-form-label">skills: </label>
+            <input type="text" name="skills" id="skills" class="form-control" placeholder="java" aria-placeholder="skills" required>
+            <button type="submit" id="skSubmit" class="col-12 btn btn-dark btn-round">Add</button>
+    </form>
+    </div>
+    
+    <div class = "laRevise">
+    <br/>
+    <p>languages</p>
+    <ol id="preLa"></ol>
+    <form action="/users/profile/" method="{{method}}" id="userLa" autocomplete="off">
+        {{#if laErr}}
+            <div class="error">{{message}}</div>
+        {{/if}}
+            <div id = "laError"></div>
+            <label for="languages" class="col-form-label">languages: </label>
+            <input type="text" name="languages" id="languages" class="form-control" placeholder="english" aria-placeholder="languages" required>
+            <button type="submit" id="laSubmit" class="col-12 btn btn-dark btn-round">Add</button>
+    </form>
+    </div>
+    <button type="button"  class="btn btn-primary" onclick="location.href = '/users/';">Goback</button>
+        <script src='/public/script/userEditAJAX.js'></script>
+</div>
+

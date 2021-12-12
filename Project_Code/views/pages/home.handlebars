@@ -1,0 +1,45 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src='/public/script/job_scripts.js'></script>
+{{#if errorclass }}
+<marquee>
+  <p class="not-found">Please Login first !!! </p>
+  </marquee>
+{{/if}}
+
+{{#if jobFound}}
+<div class="search__container">
+    <p class="search__title">
+        Search Jobs by Location, Title ...
+    </p>
+    <input type="text" class="search__input" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." >
+</div>
+<button onclick="window.location.href='/jobs/sort'">Recent Jobs</button>
+<ul id = 'myJobList' class = 'tilesWrap'>
+{{#each jobs}}
+    <li>
+		  <h2>{{@index}}</h2>
+		  <h3>{{title}}</h3>
+		  <p>
+			Type : {{type}} <br>
+      Location : {{city}},{{state}}<br>
+      Post Date: {{postDateString}}<br>
+      Job Summary : {{details.summary}}<br>
+		</p>
+		<button onclick="window.location.href='/jobs/id/{{unique}}'">Read more</button>
+    </li>
+{{/each}}
+</ul>
+
+{{/if}}
+
+{{#if nullJob}}
+
+<p>{{message}}</p>
+
+{{/if}}
+
+
+
+
+

@@ -1,0 +1,56 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src='/public/script/job_scripts.js'></script>
+{{#if errorclass }}
+<marquee>
+  <p class="not-found">Please Login first !!! </p>
+  </marquee>
+{{/if}}
+
+{{#if jobFound}}
+<div class="search__container">
+    <p class="search__title">
+        Search Jobs by Location, Title ...
+    </p>
+    <input type="text" class="search__input" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." >
+</div>
+<ul id = 'myJobList' class = 'tilesWrap'>
+{{#each jobs}}
+    <li>
+		  <h2>{{@index}}</h2>
+		  <h3>{{title}}</h3>
+		  <p>
+			Type : {{type}} <br>
+      Location : {{city}},{{state}}<br>
+      Post Date: {{postDateString}}<br>
+      Job Summary : {{details.summary}}<br>
+		</p>
+		<button onclick="window.location.href='/jobs/id/{{unique}}'">Read more</button>
+    </form>
+            <form action="/users/favor/delete/{{unique}}",  method="post">
+            <button>Remove from Saved</button>
+      </form>
+    </li>
+{{/each}}
+</ul>
+
+<div class="btn-group">
+
+    <form action="/" , method="get">
+            <button>Back To all Jobs</button>
+      </form>
+
+</div>
+
+{{/if}}
+
+{{#if nullJob}}
+
+<p>{{message}}</p>
+
+{{/if}}
+
+
+
+
+

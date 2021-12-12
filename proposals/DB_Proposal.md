@@ -21,6 +21,7 @@ The user collection will contain all users registered with the portal, along wit
 2. Optional features, these features must be fulfilled when users try to apply for jobs. It would be stored as a sub-document under `profile`.
 
    - ID photo
+   - resume url (if it exists, we use it as users' info, if not, we ask them for the following info.)
    - Gender
    - City
    - State
@@ -34,6 +35,7 @@ The user collection will contain all users registered with the portal, along wit
 
   ```json
   "_id": "7b7997a2-c0d2-4f8c-b27a-6a1d4b5b6310",
+  "resume": "one url",
   "photo": "one url",
   "gender": "m",
   "city": "Hoboken",

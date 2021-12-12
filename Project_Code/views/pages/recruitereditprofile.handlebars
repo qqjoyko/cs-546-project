@@ -1,0 +1,52 @@
+<div id="recruiterProfileEditCreate" aria-labelledby="RecruiterCreateEditProfile">
+    <div class="form-title text-center">
+       <h4>{{title}} Profile</h4>
+    </div>
+    <div class="d-flex flex-column text-center">
+        {{#if mainerr}}
+        <div class="error">{{message}}</div>
+        {{/if}}
+        <p>{{recid}}</p>
+        <form action="/recruiters/profile/{{action}}" method="{{method}}" id="recProfileCreateEdit" autocomplete="off">
+            <div class="form-group">
+                {{#if genErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <input type="text" name="gender" id="recGender" class="form-control" placeholder="M/F/U" aria-placeholder="Gender">
+                <label for="recGender" class="col-form-label">Gender: </label>
+            </div>
+            <div class="form-group">
+                {{#if compNameErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <label for="recCompany" class="col-form-label">Company: </label>
+                <input type="text" name="company" id="recCompany" class="form-control" placeholder="JP Morgan Chase/Barclays..." aria-placeholder="Company">
+            </div>
+            <div class="form-group">
+                {{#if comPosErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <label for="recPosition" class="col-form-label">Position: </label>
+                <input type="text" name="position" id="recPosition" class="form-control" placeholder="Regional Recruiter/Senior Recruiter..." aria-placeholder="Position">
+            </div>
+            <div class="form-group">
+                {{#if cityErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <label for="recCity" class="col-form-label">City: </label>
+                <input type="text" name="city" id="recCity" class="form-control" placeholder="Phoenix/New York..." aria-placeholder="City">
+            </div>
+            <div class="form-group">
+                {{#if stateErr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <input type="text" name="state" id="recState" class="form-control" placeholder="CA/Utah..." aria-placeholder="State">
+            </div>
+            <div class="form-group">
+                <textarea id="recAbout" class="form-control h-100" rows="5" placeholder="Describe yourself" aria-placeholder="Describe yourself"></textarea>
+            </div>
+            <button type="submit" id="recProfilesubmit" class="col-12 btn btn-dark btn-round">{{title}} Profile</button>
+        </form>
+    </div>
+    {{!-- <script src="/public/script/profile.js"></script> --}}
+</div>

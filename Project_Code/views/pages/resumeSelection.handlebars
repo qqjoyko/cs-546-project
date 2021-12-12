@@ -1,0 +1,22 @@
+{{#if resumeError}}
+<a href="/users/resume">no resumes found, click here to add one</a>
+{{/if}}
+
+{{#if resumes}}
+{{#each resumes}}
+<ul id='resumeList'>
+    <div class='resumeList'>
+        <a href="/users/resume/{{this}}" target="_blank">resume{{math @index "+" 1}}.pdf</a>
+        <button type="button" class="btn btn-primary"
+            onclick="apply('{{this}}','{{../jobId}}')">use it to apply</button>
+    </div>
+</ul>
+{{/each}}
+{{/if}}
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+    integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+    crossorigin="anonymous"></script>
+<script src="../../public/script/apply.js"></script>

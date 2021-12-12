@@ -1,0 +1,43 @@
+<div class="form-title text-center">
+    <h4>Applicant Signup/Register</h4>
+</div>
+<div class="d-flex flex-column text-center">
+    {{#if mainerr}}
+    <div class="error">{{message}}</div>
+    {{/if}}
+    <form action="/users/signup" method="post" id="applicantSignupform">
+        <div class="form-group">
+            {{#if fnerr}}
+                <div class="error">{{message}}</div>
+            {{else if lnerr}}
+                <div class="error">{{message}}</div>
+            {{/if}}
+            <div class="row">
+                <div class="col"><input type="text" class="form-control" name="firstName" placeholder="First Name" required="required"></div>
+                <div class="col"><input type="text" class="form-control" name="lastName" placeholder="Last Name" required="required"></div>
+            </div>        	
+        </div>
+        {{#if emailerr}}
+        <div class="error">{{message}}</div>
+        {{/if}}
+        <div class="form-group">
+            <input type="email" class="form-control" name="email" placeholder="Email" required="required">
+        </div>
+        {{#if pwderr}}
+        <div class="error">{{message}}</div>
+        {{/if}}
+        <div class="form-group">
+            <input type="password" class="form-control" name="password" placeholder="Password" required="required">
+        </div>
+        {{#if pherr}}
+        <div class="error">{{message}}</div>
+        {{/if}}
+        <div class="form-group">
+            <input type="number" class="form-control" name="phone" placeholder="Phone Number" required="required">
+        </div>        
+        <div class="form-group">
+            <button type="submit" class="btn btn-success btn-lg col-8">Register Now</button>
+        </div>
+    </form>
+    <div class="text-center">Already have an account? <a href="/users/login" id="applicantSigninBtn">Sign in</a></div>
+</div>

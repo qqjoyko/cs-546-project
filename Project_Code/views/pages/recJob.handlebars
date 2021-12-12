@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="floating-stack">
+    <dl>
+      <dt>Title</dt>
+      <dd>{{data.title}}</dd>
+
+      <dt>Type</dt>
+      <dd>{{data.type}}</dd>
+
+      <dt>Company</dt>
+      <dd>{{data.company}}</dd>
+
+      <dt>Location</dt>
+      <dd>{{data.city}}, {{data.state}}</dd>
+
+      <dt>Summary</dt>
+      <dd>{{data.details.summary}}</dd>
+
+      <dt>Description</dt>
+      <dd>{{data.details.description}}</dd>
+
+      <dt>Required Skils</dt>
+      {{#each data.details.required}}
+      <dd>{{this}}</dd>
+      {{/each}}
+
+      <dt>Benefits</dt>
+      <dd>{{data.details.benefits}}</dd>
+    </dl>
+  </div>
+</div>
+<br>
+<br>
+
+<div class="btn-group">
+
+    <form action="/" , method="get">
+            <button>Back To all Jobs</button>
+      </form>
+      <form action="/users/select/{{jobId}}" , method="get">
+            <button>apply</button>
+      </form>
+      <form action="/users/favor" , method="get">
+            <button>Saved Jobs</button>
+      </form>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+      integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+      crossorigin="anonymous"></script>
+<script src='/public/script/apply.js'></script>
