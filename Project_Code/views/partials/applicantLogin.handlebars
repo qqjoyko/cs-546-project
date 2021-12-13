@@ -1,0 +1,33 @@
+<div class="modal fade" id="applicantLogin" tabindex="-1" role="dialog" aria-labelledby="applicantLogin" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" >
+            <div class="modal-header d-block">
+                <button type="button" class="btn-close float-right" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-center">Applicant Login</h4>
+            </div>
+            <div class="modal-body">
+                {{#if mainerr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <form action="/users/login" method="post" id="apploginform">
+                    <div class="form-group mb-3">
+                        {{#if emailerr}}
+                        <div class="error">{{message}}</div>
+                        {{/if}}
+                        <input type="email" name="email" id="appAuthEmail" class="form-control" placeholder="Your email address"  required>
+                    </div>
+                    <div class="form-group mb-3">
+                        {{#if pwderr}}
+                        <div class="error">{{message}}</div>
+                        {{/if}}
+                        <input type="password" name="password" id="appAuthPwd" class="form-control" placeholder="Password"  required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="submit" id="apploginsubmit" form="apploginform" class="col-12 btn btn-dark btn-round">Login</button>
+                <div class="text-center">Not a member yet?<a href="/users/signup" id="appSignupBtn" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#appSignup">Sign Up</a></div>
+            </div>
+        </div>
+    </div>
+</div>

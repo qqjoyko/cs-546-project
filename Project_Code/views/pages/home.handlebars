@@ -3,22 +3,28 @@
 <script src='/public/script/job_scripts.js'></script>
 {{#if errorclass }}
 <marquee>
-  <p class="not-found">Please Login first !!! </p>
+  <p class="not-found">Please Login first as user first!!! </p>
   </marquee>
 {{/if}}
 
 {{#if jobFound}}
 <div class="search__container">
-    <p class="search__title">
+    <h1 class="search__title">
         Search Jobs by Location, Title ...
-    </p>
-    <input type="text" class="search__input" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." >
+    </h1>
+          <h2></h2>
+    <label for="mySearchterm">Search your Job</label>
+    <input type="text" class="search__input" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." />
+    
 </div>
+<br>
+<div class="btn-group">
 <button onclick="window.location.href='/jobs/sort'">Recent Jobs</button>
+</div>
 <ul id = 'myJobList' class = 'tilesWrap'>
 {{#each jobs}}
     <li>
-		  <h2>{{@index}}</h2>
+
 		  <h3>{{title}}</h3>
 		  <p>
 			Type : {{type}} <br>
@@ -26,7 +32,7 @@
       Post Date: {{postDateString}}<br>
       Job Summary : {{details.summary}}<br>
 		</p>
-		<button onclick="window.location.href='/jobs/id/{{unique}}'">Read more</button>
+		<button class="btn btn-outline-light" onclick="window.location.href='/jobs/id/{{unique}}'">Read more</button>
     </li>
 {{/each}}
 </ul>
@@ -39,7 +45,10 @@
 
 {{/if}}
 
-
+{{> recruiterlogin}}
+{{> recruiterSignup}}
+{{> applicantLogin}}
+{{> applicantSignup}}
 
 
 

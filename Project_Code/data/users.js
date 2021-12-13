@@ -437,29 +437,29 @@ const createProfile = async (
     throw new CustomError(400, "Could not add the profile");
 };
 
-const create = async (email, phone, firstname, lastname, password) => {
+const create = async (email, phone, firstName, lastName, password) => {
   if (
     typeof email !== "string" ||
     typeof phone !== "string" ||
-    typeof firstname !== "string" ||
-    typeof lastname !== "string" ||
+    typeof firstName !== "string" ||
+    typeof lastName !== "string" ||
     typeof password !== "string"
   ) {
     throw new CustomError(
       400,
-      "user's email, phone. firstname, lastname, password must be string"
+      "user's email, phone. firstName, lastName, password must be string"
     );
   }
   if (
     email.trim().length === 0 ||
     phone.trim().length === 0 ||
-    firstname.trim().length === 0 ||
-    lastname.trim().length === 0 ||
+    firstName.trim().length === 0 ||
+    lastName.trim().length === 0 ||
     password.trim().length === 0
   ) {
     throw new CustomError(
       400,
-      "uesr's email, phone. firstname, lastname, password can't be empty or just spaces"
+      "uesr's email, phone. firstName, lastName, password can't be empty or just spaces"
     );
   }
   const emailCheck = /[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,}/im;
@@ -474,18 +474,22 @@ const create = async (email, phone, firstname, lastname, password) => {
   //   throw new CustomError(400, "Profile must be array");
   // }
   if ((await checkDuplicateP(phone)) || (await checkDuplicateE(email))) {
-    throw new CustomError(400, "user already exists");
+    throw new CustomError(
+      400,
+      "phone number or email has been used, please try another one"
+    );
   }
   const jobs = [];
   const resume = [];
   const favor = [];
   const hash = await bcrypt.hash(password, saltRounds);
   const usersCollection = await users();
+  email = email.trim().toLowerCase();
   let newUser = {
     email,
     phone,
-    firstname,
-    lastname,
+    firstName,
+    lastName,
     password: hash,
     jobs,
     resume,
@@ -497,94 +501,19 @@ const create = async (email, phone, firstname, lastname, password) => {
   return insertInfo.insertedId;
 };
 
-// const updateProfile = async (
-//   profileId,
-//   userId,
-//   photo,
-//   gender,
-//   city,
-//   state,
-//   experience,
-//   education,
-//   skills,
-//   languages,
-//   tags
-// ) => {
-//   if (
-//     typeof userId !== "string" ||
-//     typeof photo !== "string" ||
-//     typeof gender !== "string" ||
-//     typeof city !== "string" ||
-//     typeof state !== "string"
-//   ) {
-//     throw new CustomError(
-//       400,
-//       "photo, gender, city must be stirng type and can't be null"
-//     );
-//   }
-//   if (!ObjectId.isValid(userId)) {
-//     throw new CustomError(400, "Invalid userID");
-//   } else {
-//     userId = ObjectId(userId);
-//   }
-//   if (!ObjectId.isValid(profileId)) {
-//     throw new CustomError(400, "Invalid profileId");
-//   } else {
-//     profileId = ObjectId(profileId);
-//   }
-//   if (
-//     photo.trim().length === 0 ||
-//     gender.trim().length === 0 ||
-//     city.trim().length === 0 ||
-//     state.trim().length === 0
-//   ) {
-//     // not optional, the user must fill in this data when regiester
-//     throw new CustomError(
-//       400,
-//       "name, location, phoneNumber, website, priceRange can't be empty or just spaces"
-//     );
-//   }
-//   if (gender !== "M" && gender !== "F") {
-//     throw new CustomError(400, "gender must be M(male) or F(female)");
-//   }
-//   //checkWeb(photo);
-//   checkEx(experience);
-//   checkEd(education);
-//   checkSk(skills);
-//   checkTa(tags);
-//   checkLa(languages);
-//   const usersCollection = await users();
-//   let newProfiles = {
-//     _id: profileId,
-//     photo,
-//     gender,
-//     city,
-//     state,
-//     experience,
-//     education,
-//     skills,
-//     languages,
-//     tags,
-//   };
-//   const insertInfo = await usersCollection.updateOne(
-//     { _id: userId, "profile._id": profileId },
-//     { $set: { "profile.$": newProfiles } }
-//   );
-//   if (insertInfo.modifiedCount === 0) throw "Could not update the profile";
-// };
 
-const update = async (userId, email, phone, firstname, lastname, password) => {
+const update = async (userId, email, phone, firstName, lastName, password) => {
   if (
     typeof userId !== "string" ||
     typeof email !== "string" ||
     typeof phone !== "string" ||
-    typeof firstname !== "string" ||
-    typeof lastname !== "string" ||
+    typeof firstName !== "string" ||
+    typeof lastName !== "string" ||
     typeof password !== "string"
   ) {
     throw new CustomError(
       400,
-      "user's email, phone. firstname, lastname, password must be string"
+      "user's email, phone. firstName, lastName, password must be string"
     );
   }
 
@@ -592,13 +521,13 @@ const update = async (userId, email, phone, firstname, lastname, password) => {
     userId.trim().length === 0 ||
     email.trim().length === 0 ||
     phone.trim().length === 0 ||
-    firstname.trim().length === 0 ||
-    lastname.trim().length === 0 ||
+    firstName.trim().length === 0 ||
+    lastName.trim().length === 0 ||
     password.trim().length === 0
   ) {
     throw new CustomError(
       400,
-      "uesr's email, phone. firstname, lastname, password can't be empty or just spaces"
+      "uesr's email, phone. firstName, lastName, password can't be empty or just spaces"
     );
   }
   const emailCheck = /[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,}/im;
@@ -625,8 +554,8 @@ const update = async (userId, email, phone, firstname, lastname, password) => {
   let newUser = {
     email,
     phone,
-    firstname,
-    lastname,
+    firstName,
+    lastName,
     password: hash,
   };
   const insertInfo = await usersCollection.updateOne(
@@ -658,6 +587,83 @@ const remove = async (userId) => {
     throw new CustomError(400, `Could not delete user with id: ${id}`);
   }
   //**********************remove jobId in is not necessary here
+};
+
+const auxApply = async (jobId, userId) => {
+  // this function is for seed databases
+  if (!userId || !jobId) {
+    throw new CustomError(400, "id must be provided");
+  }
+  if (typeof userId !== "string" || userId.trim().length === 0) {
+    throw new CustomError(
+      400,
+      "the userId must be non-empty string and can't just be space"
+    );
+  }
+  if (typeof jobId !== "string" || jobId.trim().length === 0) {
+    throw new CustomError(
+      400,
+      "the jobId must be non-empty string and can't just be space"
+    );
+  }
+
+  if (!ObjectId.isValid(userId)) {
+    throw new CustomError(400, "Invalid userID");
+  } else {
+    userId = ObjectId(userId);
+  }
+  if (!ObjectId.isValid(jobId)) {
+    throw new CustomError(400, "Invalid jobId");
+  } else {
+    jobId = ObjectId(jobId);
+  }
+
+  const usersCollection = await users();
+  const thisUser = await usersCollection.findOne({ _id: userId });
+  let thisJobs = thisUser.jobs;
+
+  thisJobs.forEach((ele) => {
+    if (ele._id.toString() === jobId.toString()) {
+      throw new CustomError(400, "You have already applied for it");
+    }
+  });
+
+  let newjob = {
+    _id: jobId,
+    status: "pending",
+  };
+
+  const insertInfo = await usersCollection.updateOne(
+    { _id: userId },
+    { $addToSet: { jobs: newjob } }
+  );
+  if (insertInfo.modifiedCount === 0)
+    throw new CustomError(400, "Could not apply this job for now");
+
+  //*****************recruiter collection update userId to applicantId.
+  const recruiterCol = await recruiters();
+  const jobCol = await jobs();
+
+  // find job, then find recruiter
+  const thisJob = await jobCol.findOne({ _id: jobId });
+  const posterId = thisJob.poster;
+  const thisPoster = await recruiterCol.findOne({ _id: posterId });
+  // find the job under this recruiter and add one
+  let posterJobs = thisPoster.jobs;
+  // let posterJob2 = posterJobs.map((a) => {
+  //   return { ...a };
+  // });
+  posterJobs.forEach((ele) => {
+    if (ele.job_id.toString() === jobId.toString()) {
+      ele.applicants.push({ appId: userId, status: "pending" });
+    }
+  });
+  const insertInfo2 = await recruiterCol.updateOne(
+    { _id: posterId },
+    { $set: { jobs: posterJobs } }
+  );
+  if (insertInfo2.modifiedCount === 0)
+    throw new CustomError(400, "Could not apply this job for now");
 };
 
 const apply = async (jobId, userId, fileId) => {
@@ -815,7 +821,7 @@ const getFavourites = async (userId) => {
 
   for (let i = 0; i < res.favor.length; i++) {
     for (let j = 0; j < jobAllData.length; j++) {
-      //console.log(jobAllData[j]._id);
+
 
       if (String(jobAllData[j]._id) == String(res.favor[i])) {
         allFavourJobs.push(jobAllData[j]);
@@ -823,7 +829,7 @@ const getFavourites = async (userId) => {
       }
     }
   }
-  //console.log(allFavourJobs);
+
   return allFavourJobs;
 };
 
@@ -889,12 +895,13 @@ const cancel = async (jobId, userId) => {
   } else {
     jobId = ObjectId(jobId);
   }
+
   const usersCollection = await users();
-  const insertInfo = await usersCollection.updateOne(
+  const insertInfo1 = await usersCollection.updateOne(
     { _id: userId },
     { $pull: { jobs: { _id: jobId } } }
   );
-  if (insertInfo.modifiedCount === 0)
+  if (insertInfo1.modifiedCount === 0)
     throw new CustomError(
       400,
       "Could not add the profile, the job is already exists or user doesn't exist"
@@ -902,14 +909,33 @@ const cancel = async (jobId, userId) => {
 
   // remove applicant from recruiter's collection
   const jobCol = await jobs();
-  const thisJob = jobCol.findOne({ _id: jobId });
+  const thisJob = await jobCol.findOne({ _id: jobId });
   const recruiterId = thisJob.poster;
   const recruiterCol = await recruiters();
-  const deleteInfo = await recruiterCol.updateOne(
+  const tmpInfo = await recruiterCol.findOne(
     { _id: recruiterId },
-    { $pull: { $elemMatch: { applicants: { appId: userId } } } }
+    { _id: 0, jobs: { $elemMatch: { job_id: jobId } } }
   );
-  console.log(deleteInfo);
+  if (!tmpInfo) {
+    throw new CustomError(400, "the recruiter does not exists");
+  }
+  let jobstmp = tmpInfo.jobs;
+  let tmp1 = jobstmp.filter(
+    (ele) => ele.job_id.toString() !== jobId.toString()
+  ); //ele.appId.toString() === userId.toString();
+  let tmp2 = jobstmp.find((ele) => ele.job_id.toString() === jobId.toString());
+  let tmp3 = tmp2.applicants.filter(
+    (ele) => ele.appId.toString() !== userId.toString()
+  );
+
+  tmp1.push({ job_id: tmp2.job_id, applicants: tmp3 });
+  const insertInfo = await recruiterCol.updateOne(
+    { _id: recruiterId },
+    { $set: { jobs: tmp1 } }
+  );
+  if (insertInfo.modifiedCount === 0) {
+    throw new CustomError(400, "Could not apply cancel job for now");
+  }
 };
 
 const track = async (userId) => {
@@ -934,7 +960,6 @@ const track = async (userId) => {
   // get job title
   const jobCol = await jobs();
   let jobInfo = res.jobs;
-  console.log(jobInfo);
   for (const ele of jobInfo) {
     let job = await jobCol.findOne({ _id: ele._id });
     ele.title = job.title;
@@ -942,12 +967,6 @@ const track = async (userId) => {
     ele.location = `${job.city}, ${job.state}`;
     ele.summary = job.details.summary;
   }
-  // jobInfo.forEach((ele) => {
-  //   let job = jobCol.findOne({ _id: ele._id });
-  //   jobTitle = job.title;
-  //   console.log(job);
-  //   ele.title = jobTitle;
-  // });
   return jobInfo;
 };
 
@@ -1147,6 +1166,20 @@ const addEx = async (experience, userId) => {
   if (new Date(experience.startDate) > new Date(experience.endDate)) {
     throw new CustomError(400, "Invalid start date and end date");
   }
+  let today = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate()
+  );
+  if (
+    new Date(experience.startDate) > today ||
+    new Date(experience.endDate) > today
+  ) {
+    throw new CustomError(
+      400,
+      "start date and end date can't be later than today"
+    );
+  }
   const usersCollection = await users();
   const insertInfo = await usersCollection.updateOne(
     { _id: userId },
@@ -1259,7 +1292,20 @@ const addEdu = async (education, userId) => {
   if (new Date(education.startDate) > new Date(education.endDate)) {
     throw new CustomError(400, "Invalid start date and end date");
   }
-
+  let today = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate()
+  );
+  if (
+    new Date(education.startDate) > today ||
+    new Date(education.endDate) > today
+  ) {
+    throw new CustomError(
+      400,
+      "start date and end date can't be later than today"
+    );
+  }
   const usersCollection = await users();
   const insertInfo = await usersCollection.updateOne(
     { _id: userId },
@@ -1267,7 +1313,6 @@ const addEdu = async (education, userId) => {
   );
   if (insertInfo.modifiedCount === 0)
     throw new CustomError(400, "Could not update the education");
-  console.log(insertInfo);
   return insertInfo.acknowledged;
 };
 const delEdu = async (school, userId) => {
@@ -1344,7 +1389,6 @@ const addSk = async (skill, userId) => {
   );
   if (insertInfo.modifiedCount === 0)
     throw new CustomError(400, "Could not update the skills");
-  console.log(insertInfo);
   return insertInfo.acknowledged;
 };
 const delSk = async (skill, userId) => {
@@ -1421,7 +1465,6 @@ const addLa = async (languages, userId) => {
   );
   if (insertInfo.modifiedCount === 0)
     throw new CustomError(400, "Could not update the skills");
-  console.log(insertInfo);
   return insertInfo.acknowledged;
 };
 
@@ -1484,55 +1527,6 @@ module.exports = {
   delLa,
   getResume,
   apply,
+  auxApply,
 };
-// test functions **IMPORTANT**
-//checkEx([{title:"Maintenance Engineer", employmentType: "full time", companyName:"Apple",startDate: "08/05/2017", endDate: "08/05/2018"}])
-//checkEd([{school:"SIT", major: "CE", degree:"master of science",startDate: "08/05/2017", endDate: "08/05/2018"}])
-//console.log(ObjectId.isValid('timtomtamted'));
 
-// createProfile(
-//     "61b409843132c093c1f3b57b",
-//     "one url",
-//     "M",
-//     "Hoboken",
-//     "NJ",
-//     [{title:"Maintenance Engineer", employmentType: "full time", companyName:"Apple",startDate: "08/05/2017", endDate: "08/05/2018"}],
-//     [{school:"SIT", major: "CE", degree:"master of science",startDate: "08/05/2017", endDate: "08/05/2018"}],
-//     ["Java", "JS"],
-//     ["english"],
-//     ["SDE","DS"]
-// ).catch(e => console.log(e));
-//tmp =
-
-//create("sega@gmail.com", "8482426666", "demo", "sega", "ccc11111111").catch(e => console.log(e));
-
-// updateProfile(
-//     '61a34056fbd0613af9d399fc',
-//     "61a33e54ded974aae50bb725",
-//     "one url",
-//     "M",
-//     "Hoboken",
-//     "NJ",
-//     [{title:"Maintenance Engineer", employmentType: "full time", companyName:"Apple",startDate: "08/05/2017", endDate: "08/05/2018"}],
-//     [{school:"SIT", major: "CE", degree:"master of science",startDate: "08/05/2017", endDate: "08/05/2018"}],
-//     ["Java", "JS"],
-//     ["english","ch"],
-//     ["SDE","DS","Web"]
-// )
-
-//update("61b078ea5805134fecbbf766","Wangyou@gmail.com", "8482426556", "you", "wang", "12345678").catch(ele => console.log(ele));
-//apply("61b15a1e8c17796d6171015d","61b15aafb06d8df4d3ec63c3").catch(ele => console.log(ele));
-//cancel("61a33e454966f774489ca999", "61a4236167e3b3f821f5e374");
-
-//track("61a33e454966f774489ca999", "61a4236167e3b3f821f5e374").then(ele => console.log(ele));
-//trackAll("61a4236167e3b3f821f5e374").then(ele => console.log(ele));
-// get("61a4236167e3b3f821f5e374???").then(ele => console.log(ele)).catch(ele => console.log(ele));
-//getAll().then(ele => console.log(ele));
-//Favorites("61b15a1e8c17796d6171015f","61b409843132c093c1f3b57b");
-//getFavourites("61a33e13067da688cb1f8e39").then(ele => console.log(ObjectId(ele[0])))
-//delFavourites("61a4236167e3b3f821f5eeee","61a33e13067da688cb1f8e39");
-//checkUser("sega@gmail.com", "ccc11111111").then(ele => console.log(ele)).catch(e => console.log(e));
-//addEx({title:"cctv Engineer", employmentType: "full time", companyName:"Apple",startDate: "2017/05/17", endDate: "2021/05/12"},"61b15aafb06d8df4d3ec63c3").catch(e=>console.log(e))
-//editProfile("61b409843132c093c1f3b57b","M","Ho","NJ")
-//delEx("Apple","61b409843132c093c1f3b57b")
-// delSk("JS","61b409843132c093c1f3b57b")

@@ -42,13 +42,13 @@ router.post("/resume/upload", upload.single("file"), async (req, res) => {
   if (req.file.mimetype !== "application/pdf") {
     return res.render("pages/applicantResume", { error: "file type error" });
   }
-  console.log(res.req.file);
+  // console.log(res.req.file);
   try {
     const addRes = await users.addResume(req.session.user.id, res.req.file.id);
-    console.log(addRes);
+    // console.log(addRes);
   } catch (e) {
     res.render("pages/applicantResume", { error: e.message });
-    console.log(e);
+    // console.log(e);
   }
   res.redirect("/users");
 });
@@ -170,14 +170,13 @@ router.get("/", async (req, res) => {
     } catch (e) {
       resumeError = e.message;
     }
-
     return res.render("pages/applicantProfile", {
-      user: user,
+      user,
       jobs: user.jobs,
       userId: id,
       newUser: newUser,
       resumes,
-      resumeError,
+      resumeError
     });
   }
 });
@@ -196,8 +195,6 @@ router.get("/profile/", async (req, res) => {
     }
     let id = req.session.user.id;
     if (ObjectId.isValid(id)) {
-      let user = await users.get(id);
-      console.log(user);
       return res.render("pages/applicanteditprofile", {
         title: "Update",
         method: "POST",
@@ -216,14 +213,14 @@ router.post("/login", async (req, res) => {
   let password = req.body.password;
   //let status = req.body.status; //**************use status to store a form data that shows the user is applicant or recruiter */
   if (typeof email !== "string") {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send( {
       message: "email must be string",
       emailerr: true,
     });
     return;
   }
   if (typeof password !== "string") {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send( {
       message: "password must be string",
       pwderr: true,
     });
@@ -232,7 +229,7 @@ router.post("/login", async (req, res) => {
   email = email.trim().toLowerCase();
   password = password.trim();
   if (email.length === 0 || password.length === 0) {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send( {
       message: "Not a valid email format",
       emailerr: true,
     });
@@ -240,7 +237,7 @@ router.post("/login", async (req, res) => {
   }
   const emailCheck = /[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,}/im;
   if (!emailCheck.test(email)) {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send({
       message:
         "email can only be alphanumeric characters and should be at least 4 characters long.",
       emailerr: true,
@@ -248,14 +245,14 @@ router.post("/login", async (req, res) => {
     return;
   }
   if (password.length < 6) {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send( {
       message: "password must be longer than 6",
       pwderr: true,
     });
     return;
   }
   if (password.indexOf(" ") >= 0) {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send( {
       message: "password can't contain space",
       pwderr: true,
     });
@@ -267,14 +264,14 @@ router.post("/login", async (req, res) => {
   } catch (e) {
     res
       .status(400)
-      .render("pages/applicantlogin", { message: e.message, mainerr: true });
+      .send({ message: e.message, mainerr: true });
     return;
   }
   if (tmp.authenticated === true) {
     req.session.user = { email: email, type: "user", id: tmp.id };
     res.redirect(`/users/`); //goto main page after user has logined in
   } else {
-    res.status(400).render("pages/applicantlogin", {
+    res.status(400).send({
       message: "please try again",
       mainerr: true,
     });
@@ -286,20 +283,17 @@ router.post("/signup", async (req, res) => {
   let { email, password, firstName, lastName, phone } = req.body;
   let re = /[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,}/im;
   if (email == "" || email == undefined)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Please enter your email.",
       emailerr: true,
     });
   if (email.length < 6)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "The email is too short.",
       emailerr: true,
     });
   if (!re.test(email))
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: `${email} is not a valid email.`,
       emailerr: true,
     });
@@ -308,20 +302,17 @@ router.post("/signup", async (req, res) => {
   //password validation
   let re2 = /\s/i;
   if (!password)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: `Please enter your password`,
       pwderr: true,
     });
   if (re2.test(password))
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Spaces are not allowed in passwords.",
       pwderr: true,
     });
   if (password.length < 6)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Password is too short.",
       pwderr: true,
     });
@@ -331,26 +322,22 @@ router.post("/signup", async (req, res) => {
   firstName = firstName.trim();
   lastName = lastName.trim();
   if (firstName == "" || firstName == undefined)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Please enter your first name.",
       fnerr: true,
     });
   if (!re3.test(firstName))
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Your name should not contain special characters.",
       fnerr: true,
     });
   if (lastName == "" || lastName == undefined)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Please enter your last name.",
       lnerr: true,
     });
   if (!re3.test(lastName))
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Your name should not contain special characters.",
       lnerr: true,
     });
@@ -359,20 +346,17 @@ router.post("/signup", async (req, res) => {
   let re4 = /[0-9]{10}/;
   phone = phone.trim();
   if (phone == "" || phone == undefined)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Please enter your phone number.",
       pherr: true,
     });
   if (phone.length != 10)
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Invalid phone number.",
       pherr: true,
     });
   if (!re4.test(phone))
-    return res.status(400).render("pages/applicantSignup", {
-      title: "Sign Up/Register",
+    return res.status(400).send({
       message: "Invalid phone number.",
       pherr: true,
     });
@@ -385,10 +369,9 @@ router.post("/signup", async (req, res) => {
       password
     );
     req.session.user = { email: email, type: "user", id: userId };
-    console.log(req.session.user);
     return res.redirect(`/users/`);
   } catch (e) {
-    return res.status(e.status).render("pages/applicantSignup", {
+    return res.status(e.status).send({
       title: "Sign Up/Register",
       message: e.message,
       mainerr: true,
@@ -418,7 +401,7 @@ router.get("/favor", async (req, res) => {
   }
   try {
     let output = await users.getFavourites(userId);
-    console.log(output);
+    // console.log(output);
     if (output) {
       if (output.length == 0) {
         return res.render("pages/favorJobs", {
@@ -577,6 +560,15 @@ router.post("/cancel/:id", async (req, res) => {
       return res.redirect("/logout");
     }
   }
+
+  try {
+    const cancelRes = await users.cancel(req.params.id, req.session.user.id);
+  } catch (e) {
+    return res.json({ message: e.message });
+  }
+
+  let message = "You have successfully cancel the application for the job";
+  return res.json({ message });
 });
 
 // router.delete("/apply", async (req, res) => {
@@ -666,7 +658,7 @@ router.get("/apply", async (req, res) => {
   }
   try {
     let output = await users.track(userId);
-    console.log(output);
+    // console.log(output);
     if (output) {
       if (output.length == 0) {
         return res.render("pages/appliedJob", {
@@ -807,11 +799,20 @@ router.post("/ex", async (req, res) => {
       exErr: true,
     });
   }
+  let today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  if (new Date(experience.startDate) > today || new Date(experience.endDate) > today) {
+    return res.status(400).render("pages/applicanteditprofile", {
+      title: "experience",
+      message: "start date and end date can't be later than today",
+      exErr: true,
+    });
+  }
   try {
     let output = await users.addEx(experience, userId);
-    console.log(output);
+    // console.log(output);
     return res.json(output);
   } catch (e) {
+    // console.log(e)
     return res.status(e.status).render("pages/applicanteditprofile", {
       title: "experience",
       message: e.message,
@@ -947,6 +948,14 @@ router.post("/edu", async (req, res) => {
       eduErr: true,
     });
   }
+  let today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  if (new Date(education.startDate) > today || new Date(education.endDate) > today) {
+    return res.status(400).render("pages/applicanteditprofile", {
+      title: "education",
+      message: "start date and end date can't be later than today",
+      eduErr: true,
+    });
+  }
   try {
     let output = await users.addEdu(education, userId);
     return res.json(output);
@@ -997,7 +1006,7 @@ router.delete("/edu", async (req, res) => {
     let output = await users.delEdu(school, userId);
     return res.json(output);
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     return res.status(e.status).render("pages/applicanteditprofile", {
       title: "education",
       message: e.message,
@@ -1149,7 +1158,7 @@ router.get("/la", async (req, res) => {
 
 router.post("/la", async (req, res) => {
   let la = req.body.tmp;
-  console.log(la);
+  // console.log(la);
   if (!req.session.user) {
     return res.redirect("/users/login");
   }

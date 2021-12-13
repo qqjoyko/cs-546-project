@@ -1,0 +1,43 @@
+<div class="modal fade" id="recruiterSignup" tabindex="-1" role="dialog" aria-labelledby="recruiterSignup" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" >
+            <div class="modal-header d-block">
+                <button type="button" class="btn-close float-right" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-center">Recruiter Signup/Register</h4>
+            </div>
+
+            <div class="modal-body">
+                {{#if mainerr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <form action="/recruiters/signup" method="post" id="recruiterSignupform">
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col"><input type="text" class="form-control" name="firstName" placeholder="First Name" required="required" id="recFirstName"></div>
+                            <div class="col"><input type="text" class="form-control" name="lastName" placeholder="Last Name" required="required" id="recLastName"></div>
+                        </div>        	
+                    </div>
+                    <div class="form-group mb-3">
+                        <input type="email" class="form-control" name="email" placeholder="Email" required="required" id="recEmail">
+                    </div>
+                    {{#if pwderr}}
+                    <div class="error">{{message}}</div>
+                    {{/if}}
+                    <div class="form-group mb-3">
+                        <input type="password" class="form-control" name="password" placeholder="Password" required="required" id="recPwd">
+                    </div>
+                    {{#if pherr}}
+                    <div class="error">{{message}}</div>
+                    {{/if}}
+                    <div class="form-group mb-3">
+                        <input type="number" class="form-control" name="phone" placeholder="Phone Number" required="required" id="recPhone">
+                    </div>        
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="submit" form="recruiterSignupform" class="btn btn-success btn-lg col-8  d-flex justify-content-center">Register Now</button>
+                <div class="float-right">Already have an account? <a href="/recruiters/login" id="recruiterSigninBtn" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#recruiterLogin">Sign in</a></div>
+            </div>
+        </div>
+    </div>
+</div>

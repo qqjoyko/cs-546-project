@@ -11,3 +11,16 @@ function apply(fileId, jobId) {
     });
   }
 }
+
+function cancel(jobId) {
+  if (confirm("Are you sure to cancel this applied job?")) {
+    cancelReq = {
+      method: "post",
+      url: `/users/cancel/${jobId}`,
+    };
+    $.ajax(cancelReq).then((res) => {
+      alert(res.message);
+      location.reload(true);
+    });
+  }
+}

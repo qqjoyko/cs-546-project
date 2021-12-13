@@ -1,0 +1,33 @@
+<div class="modal fade" id="recruiterLogin" tabindex="-1" role="dialog" aria-labelledby="recruiterLogin" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" >
+            <div class="modal-header d-block">
+                <button type="button" class="btn-close float-right" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-center">Recruiter Login</h4>
+            </div>
+            <div class="modal-body">
+                {{#if mainerr}}
+                <div class="error">{{message}}</div>
+                {{/if}}
+                <form action="/recruiters/login" method="post" id="recloginform">
+                    <div class="form-group mb-3">
+                        {{#if emailerr}}
+                        <div class="error">{{message}}</div>
+                        {{/if}}
+                        <input type="email" name="email" id="recAuthEmail" class="form-control" placeholder="Your email address" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        {{#if pwderr}}
+                        <div class="error">{{message}}</div>
+                        {{/if}}
+                        <input type="password" name="password" id="recAuthPwd" class="form-control" placeholder="Password" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="submit" form="recloginform" class="col-12 btn btn-dark btn-round">Login</button>
+                <div class="text-center">Not a member yet?<a href="/recruiters/signup" id="recruiterSignupBtn" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#recruiterSignup">Sign Up</a></div>
+            </div>
+        </div>
+    </div>
+</div>

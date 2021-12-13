@@ -1,15 +1,15 @@
-<section class="section profile-section" id="userProfile">
+<section class="section profile-section" id="userProfilePage">
     <div class="container">
         <div class="row">
             <div class="col-6">
                 {{!-- <img src="{{user.profile.photo}}"></img> --}}
             </div>
-            <div class="col-6">
-                <h2>Hello {{user.firstname}}{{user.lastname}}</h2>
+            <div class="text-center">
+                <h1>Hello,{{user.firstName}}&nbsp;{{user.lastName}}</h1>
                 {{#if newUser}}
-                <h6>For your better experience, please complete your personal information first</h6>
+                <p>For your better experience, please complete your personal information first</p>
                 {{else}}
-                <h6>Welcome back</h6>
+                <h2>Welcome back</h2>
                 {{/if}}
             </div>
         </div>
@@ -20,7 +20,7 @@
                     onclick="location.href='/users/profile/';">Create
                     Profile</button>
             </div>
-        </div>
+        </div><br>
         {{else}}
         <div class="row editprofilebtn">
             <div class="col">
@@ -83,10 +83,10 @@
     {{#if resumes}}
     {{#each resumes}}
     <ul id='resumeList'>
-        <div class='resumeList'> <a href="/users/resume/{{this}}" target="_blank">resume{{math @index "+" 1}}.pdf</a>
+        <li class='resumeList'> <a href="/users/resume/{{this}}" target="_blank" id = "fix_tota11y">resume{{math @index "+" 1}}.pdf</a>
             <button type="button" value={{this}} class="delete btn-primary"
                 onclick="deleteResume(this.value)">delete</button>
-        </div>
+        </li>
     </ul>
     {{/each}}
     {{/if}}
@@ -108,6 +108,7 @@
             </div>
         </div>
     </div> --}}
+    </div>
 </section>
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"

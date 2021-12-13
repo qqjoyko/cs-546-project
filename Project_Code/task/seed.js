@@ -1,124 +1,145 @@
-let userInfo = require("./users");
-let recruiterInfo = require("./recruiters");
-let jobInfo = require("./jobs");
-const { users, recruiters, jobs } = require("../config/mongoCollections");
-const { connectToDb, closeConnection } = require("../config/mongoConnection");
-const bcrypt = require("bcrypt");
+const recs = require("./recruiter_gen");
+const newJob = require("./job_gen");
+const fs = require("fs").promises;
+const data = require("../data/index");
+const recFuncs = data.recruiters;
+const userFuncs = data.users;
+const { connectToDb } = require("../config/mongoConnection");
+const { jobs } = require("../config/mongoCollections");
+async function* asyncGenerator(num) {
+  let i = 0;
+  while (i < num) {
+    yield i++;
+  }
+}
 
-const password1 = "12345678";
-const password2 = "87654321";
-const password3 = "135792468";
-
-const setup = async () => {
+async function dropAll() {
   const db = await connectToDb();
-
-  // clean
   try {
-    await db.collection("users").drop();
-    await db.collection("recruiters").drop();
-    await db.collection("jobs").drop();
-    await db.collection("userProfiles.files").drop();
-    await db.collection("userProfiles.chunks").drop();
-  } catch (e) {}
+    await db.dropDatabase();
+  } catch (e) {
+    console.log(e);
+  }
+}
+async function seedUser(num) {
+  // creat users
+  console.log("--------------------------------------------");
+  console.log("Starting to Create Users...");
+  const ids = [];
+  const login = [];
+  for (let i = 0; i < num; i++) {
+    const { firstName, lastName, password, email, phone } = recs.rec();
+    // console.log(phone);
+    // const hashed = await bcrypt.hash(password, 4);
+    try {
+      var tmp = await userFuncs.create(
+        email,
+        phone,
+        firstName,
+        lastName,
+        password
+      );
+    } catch (e) {
+      console.log(e);
+    }
+    ids.push(tmp);
+    // console.log(tmp);
+    // console.log(ids);
+    login.push({ email: email, password: password });
+    console.log(`Inserting Users: ${i}/${num - 1}`);
+  }
+  console.log("All users have been created!");
+  // output to json
+  let userLogin = JSON.stringify(login);
+  await fs.writeFile("./task/user.json", userLogin, "utf8");
+  return ids;
+}
 
-  // seed jobs, get id
+async function seedRec(num, numOfUsers, numOfJobs) {
+  // create users
+  const userIds = await seedUser(numOfUsers);
+
+  // creat recruiters
+  console.log("--------------------------------------------");
+  console.log("Starting to Create Recruiters...");
+  const ids = [];
+  const login = [];
+  for (let i = 0; i < num; i++) {
+    const { firstName, lastName, password, email, phone } = recs.rec();
+    // console.log(phone);
+    // const hashed = await bcrypt.hash(password, 4);
+    try {
+      var tmp = await recFuncs.createRecruiter(
+        email,
+        password,
+        firstName,
+        lastName,
+        phone
+      );
+    } catch (e) {
+      console.log(e);
+    }
+    ids.push(tmp.data._id);
+    // console.log(tmp);
+    // console.log(ids);
+    login.push({ email: tmp.data.email, password: password });
+    console.log(`Inserting Recruiters: ${i}/${num - 1}`);
+  }
+
+  // add profiles and jobs
+  console.log("--------------------------------------------");
+  console.log("Starting to seed Profiles for Recruiters...");
+  for (id of ids) {
+    let idx = ids.indexOf(id);
+    const { gender, city, state, company } = recs.recPro();
+    const profile = { gender, city, state, company };
+    try {
+      await recFuncs.createProfile(id, profile);
+      console.log(`Seeding Profiles for Recruiters: ${idx}/${ids.length - 1}`);
+    } catch (e) {
+      console.log(e);
+    }
+
+    // post jobs
+    for (let j = 0; j < numOfJobs; j++) {
+      let jobDetails = newJob();
+      try {
+        await recFuncs.postJob(id, jobDetails);
+        console.log(`Recruiter${idx} is posting his jobs...`);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  // output to json
+  let RecLogin = JSON.stringify(login);
+  await fs.writeFile("./task/recruiter.json", RecLogin, "utf8");
+
+  // apply for jobs
+  console.log("--------------------------------------------");
+  console.log("Now users are applying for jobs...");
   const jobCol = await jobs();
-  const insertedInfo1 = await jobCol.insertMany([
-    jobInfo.job1,
-    jobInfo.job2,
-    jobInfo.job3,
-  ]);
-  let jobIds = Object.values(insertedInfo1.insertedIds);
+  const allJob = await jobCol.find({}).toArray();
+  const assignApply = [];
+  for ({ _id: id } of allJob) {
+    let numOfApps = Math.floor(Math.random() * userIds.length);
+    for (let i = 0; i < numOfApps; i++) {
+      // console.log(userIds[i]);
+      try {
+        await userFuncs.auxApply(id.toString(), userIds[i].toString());
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  console.log("Now users have applied for jobs");
+  console.log("You can close the session now");
+}
 
-  // hash passwords
-  const hash1 = await bcrypt.hash(password1, 5);
-  const hash2 = await bcrypt.hash(password2, 5);
-  const hash3 = await bcrypt.hash(password3, 5);
+dropAll();
+// seedUser(5);
 
-  // setup users
-  userInfo.user1.password = hash1;
-  userInfo.user2.password = hash2;
-  userInfo.user3.password = hash3;
-  userInfo.user1.jobs.push({ job: jobIds[0], status: "pending" });
-  userInfo.user1.jobs.push({ job: jobIds[1], status: "pending" });
-  userInfo.user1.jobs.push({ job: jobIds[2], status: "pending" });
-  userInfo.user1.favor.push(jobIds[0]);
-
-  userInfo.user2.jobs.push({ job: jobIds[0], status: "pending" });
-  userInfo.user2.jobs.push({ job: jobIds[1], status: "pending" });
-  userInfo.user2.favor.push(jobIds[1]);
-  userInfo.user2.favor.push(jobIds[2]);
-
-  userInfo.user3.jobs.push({ job: jobIds[0], status: "pending" });
-  userInfo.user3.jobs.push({ job: jobIds[2], status: "pending" });
-  userInfo.user3.favor.push(jobIds[0]);
-  userInfo.user3.favor.push(jobIds[1]);
-  userInfo.user3.favor.push(jobIds[2]);
-
-  const userCol = await users();
-  const insertedInfo2 = await userCol.insertMany([
-    userInfo.user1,
-    userInfo.user2,
-    userInfo.user3,
-  ]);
-  let userIds = Object.values(insertedInfo2.insertedIds);
-
-  // setup recruiters
-  recruiterInfo.recruiter1.password = hash1;
-  recruiterInfo.recruiter2.password = hash2;
-  recruiterInfo.recruiter3.password = hash3;
-
-  // suppose each recruiter post one job
-  recruiterInfo.recruiter1.jobs.push({
-    job_id: jobIds[0],
-    applicants: [
-      { appId: userIds[0], status: "pending" },
-      { appId: userIds[1], status: "pending" },
-      { appId: userIds[2], status: "pending" },
-    ],
-  });
-  recruiterInfo.recruiter2.jobs.push({
-    job_id: jobIds[1],
-    applicants: [
-      { appId: userIds[0], status: "pending" },
-      { appId: userIds[1], status: "pending" },
-    ],
-  });
-  recruiterInfo.recruiter3.jobs.push({
-    job_id: jobIds[2],
-    applicants: [
-      { appId: userIds[0], status: "pending" },
-      { appId: userIds[2], status: "pending" },
-    ],
-  });
-
-  const recruiterCol = await recruiters();
-  const insertedInfo3 = await recruiterCol.insertMany([
-    recruiterInfo.recruiter1,
-    recruiterInfo.recruiter2,
-    recruiterInfo.recruiter3,
-  ]);
-
-  // update posters
-  let recruiterIds = Object.values(insertedInfo3.insertedIds);
-  // console.log(recruiterIds);
-  await jobCol.updateOne(
-    { _id: jobIds[0] },
-    { $set: { poster: recruiterIds[0] } }
-  );
-  await jobCol.updateOne(
-    { _id: jobIds[1] },
-    { $set: { poster: recruiterIds[1] } }
-  );
-  await jobCol.updateOne(
-    { _id: jobIds[2] },
-    { $set: { poster: recruiterIds[2] } }
-  );
-  // let job1 = await jobCol.findOne({ _id: jobIds[0] });
-  // console.log(job1)
-  // let job2 = await jobCol.findOne({ _id: jobIds[1] });
-  // let job3 = await jobCol.findOne({ _id: jobIds[2] });
-  await closeConnection();
-};
-
-setup();
+// first parameter is the number of recruiters
+// first parameter is the number of users
+// first parameter is the number of jobs under each recruiter
+seedRec(6, 20, 5);

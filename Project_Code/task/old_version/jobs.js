@@ -1,4 +1,4 @@
-const { jobs } = require("../config/mongoCollections");
+const { jobs } = require("../../config/mongoCollections");
 
 const detail1 = {
   summary: "This is a abc company",

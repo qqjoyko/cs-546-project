@@ -1,11 +1,10 @@
-<section class="section profile-section" id="recProfile">
+<section class="section profile-section" >
     {{!-- Delete Recruiter Modal --}}
-
     <div class="modal" tabindex="-1" role="dialog" id="recDelModal">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Delete Recruiter</h5>
+            <h1 class="modal-title">Delete Recruiter</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal">
             </button>
         </div>
@@ -28,16 +27,21 @@
                 <div class="row py-3">
                     <div class="card text-center">
                         <div class="card-body">
+                            <h1></h1>
+                            <h2></h2>
                             <h3 class="card-title">{{recruiter.firstName}} {{recruiter.lastName}}</h3>
                             {{#if newRec}}
                                 <div><a href="/recruiters/profile/" role="button" class="btn btn-danger" id="recCreateProfileBtn">Create Profile</a></div>
                             {{/if}}
                             {{#unless newRec}}
                                 <div>
+                                <h4></h4>
+                                <h5></h5>
                                 <h6 class="card-subtitle mb-2 text-muted">{{recruiter.profile.company.position}}, {{recruiter.profile.company.name}}</h6>
                                 <a href="/recruiters/profile/" role="button" class="btn btn-primary my-4" id="recEditProfileBtn">Edit Profile</a>
                                 </div>
                             {{/unless}}
+                            <button type="button" class="btn btn-outline-danger" id="recDelBtn" data-bs-toggle="modal" data-bs-target="#recDelModal">Delete Account</button>
                             <p class="card-text">{{recruiter.profile.company.description}}</p>
                         </div>
                     </div>
@@ -54,11 +58,11 @@
                             <div class="accordion" id="job-accordion">
                                 {{#each jobs}}
                                 <div class="card bg-light">
-                                    <h2 class="card-header" id="jobheading{{@index}}">
+                                    <div class="card-header" id="jobheading{{@index}}">
                                         <div class="container-fluid px-0" id="jobContainer{{@index}}">
                                             <div class="row mb-0" id="jobModify{{@index}}">
                                                 <div class="col-9 text-center">
-                                                    <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJob{{@index}}" aria-expanded="false" aria-controls="collapseJob{{@index}}">
+                                                    <button class="btn btn-primary text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJob{{@index}}" aria-expanded="false" aria-controls="collapseJob{{@index}}">
                                                         {{jobDetails.title}}
                                                     </button>
                                                 </div>
@@ -78,7 +82,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </h2>
+                                    </div>
                                 </div>
                                     <div id="collapseJob{{@index}}" class="accordion-collapse collapse" aria-labelledby="jobheading{{@index}}" data-bs-parent="#job-accordion">
                                         <div class="card-body">
@@ -96,9 +100,19 @@
                                                                     <form style="display: inline" action="/recruiters/reject/" method="get">
                                                                         <button id="rejectDecision{{@../index}}{{@index}}" type="submit" value="Reject" class="btn btn-danger me-md-2">Reject</button>
                                                                     </form> --}}
-                                                                    <a href="/recruiters/checkResume/{{../job_id}}/{{_id}}" target="_blank" role="button" class="btn btn-outline-secondary me-md-2 openResume" id="openResume{{@../index}}{{@index}}">Open Resume</a>
-                                                                    <a href="/recruiters/accept/{{../job_id}}/{{_id}}" role="button" class="btn btn-outline-success me-md-2 acceptDec" id="acceptDecision{{@../index}}{{@index}}">Accept</a>
-                                                                    <a href="rejectDecision{{@../index}}{{@index}}" role="button" class="btn btn-outline-danger me-md-2 rejectDec" id="rejectDecision{{@../index}}{{@index}}">Reject</a>
+                                                                    <div class = 'btn-group' role = "group">
+                                                                    <a href="/recruiters/checkResume/{{../job_id}}/{{_id}}" target="_blank" role="button" class="btn btn-secondary me-md-2 openResume" id="openResume{{@../index}}{{@index}}">Open Resume</a>
+                                                                    {{#ifCond jobs.0.status "pending"}}
+                                                                    <a href="/recruiters/accept/{{../job_id}}/{{_id}}" role="button" class="btn btn-success me-md-2 acceptDec" id="acceptDecision{{@../index}}{{@index}}">Accept</a>
+                                                                    <a href="/recruiters/reject/{{../job_id}}/{{_id}}" role="button" class="btn btn-danger me-md-2 rejectDec" id="rejectDecision{{@../index}}{{@index}}">Reject</a>
+                                                                    {{/ifCond}}
+                                                                    {{#ifCond jobs.0.status "Accepted"}}
+                                                                    <button class="btn btn-success me-md-2 acceptDec" id="acceptDecision{{@../index}}{{@index}}" disabled>Accepted</button>
+                                                                    {{/ifCond}}
+                                                                    {{#ifCond jobs.0.status "Rejected"}}
+                                                                    <button class="btn btn-danger me-md-2 rejectDec" id="rejectDecision{{@../index}}{{@index}}" disabled>Rejected</button>
+                                                                    {{/ifCond}}
+                                                                    </div>
 
                                                             </div>
                                                         </div>

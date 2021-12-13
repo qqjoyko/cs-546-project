@@ -95,7 +95,7 @@ router.get("/jobs/state/:state", async (req, res) => {
 router.get('/logout', (req, res) => {
   if(req.session.user){
       req.session.destroy((function(err){
-          res.clearCookie('AuthCookie').render('pages/logout');
+          res.clearCookie('AuthCookie').redirect('/');
   
       }));
       return;
@@ -115,7 +115,6 @@ router.get("/jobs/recruiters/id/:id", async (req, res) => {
     }
     const result = await jobData.getJobsById(req.params.id);
     const jobId = req.params.id;
-    console.log(jobId);
     return res.render("pages/recJob", { data: result, jobId: jobId });
   } catch (e) {
     // write a function here to render page heere
@@ -132,7 +131,6 @@ router.get("/jobs/recruiters/id/:id", async (req, res) => {
     }
     const result = await jobData.getJobsById(req.params.id);
     const jobId = req.params.id;
-    console.log(jobId);
     return res.render("pages/recJob", { data: result, jobId: jobId });
   } catch (e) {
     // write a function here to render page heere

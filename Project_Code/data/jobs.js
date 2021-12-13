@@ -81,7 +81,6 @@ async function getJobsById(id) {
 
     const jobCollection = await jobs();
     let res = await jobCollection.findOne({ _id: new ObjectId(id)});
-    console.log(res);
     return res;
   }
 
@@ -387,7 +386,6 @@ async function sortByDate(){
         return a.postDate - b.postDate
     });
 
-    console.log(res);
 
     return res;
 

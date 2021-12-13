@@ -5,11 +5,11 @@
 {{#if resumes}}
 {{#each resumes}}
 <ul id='resumeList'>
-    <div class='resumeList'>
+    <li class='resumeList'>
         <a href="/users/resume/{{this}}" target="_blank">resume{{math @index "+" 1}}.pdf</a>
         <button type="button" class="btn btn-primary"
             onclick="apply('{{this}}','{{../jobId}}')">use it to apply</button>
-    </div>
+    </li>
 </ul>
 {{/each}}
 {{/if}}

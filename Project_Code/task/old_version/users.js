@@ -1,4 +1,4 @@
-const { users } = require("../config/mongoCollections");
+const { users } = require("../../config/mongoCollections");
 const bcrypt = require("bcrypt");
 var ObjectId = require("mongodb").ObjectId;
 

@@ -1,5 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src='/public/script/applied_job.js'></script>
+<script src='/public/script/job_scripts.js'></script>
+<script src='/public/script/apply.js'></script>
 {{#if errorclass }}
 <marquee>
     <p class="not-found">Please Login first !!! </p>
@@ -7,24 +8,37 @@
 {{/if}}
 
 {{#if jobFound}}
-<input type="text" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." title="Type in a term">
-<ul id='myJobList'>
+<div class="search__container">
+    <h1 class="search__title">
+        Search Jobs by Location, Title ...
+    </h1>
+    <h2></h2>
+    <input type="text" class="search__input" id="mySearchterm" onkeyup="filter(this);" placeholder="Search for Jobs.." title="Type in a term">
+</div>
+
+<ul id = 'myJobList' class = 'tilesWrap'>
     {{#each jobs}}
     <li>
         {{!-- <h2>{{@index}}</h2> --}}
-        <h3>{{title}}</h3>
+        <h3>{{title}}: {{status}}</h3>
         <p>
-            Type : {{type}} <br>
+            Type : {{type}}<br>
             Location : {{location}}<br>
             Job Summary : {{summary}}<br>
         </p>
-        <button onclick="window.location.href='/jobs/id/{{unique}}'" class="delete btn-primary">Read more</button>
-        <button type="button" class="delete btn-primary"
-                onclick="cancel({{_id}})">cancel</button>
+        <button onclick="window.location.href='/jobs/id/{{unique}}'" class="btn btn-primary">Read more</button>
+        <button type="button" class="delete btn-primary" onclick="cancel('{{_id}}')">cancel</button>
     </li>
     {{/each}}
 </ul>
 
+<div class="btn-group">
+
+    <form action="/" method="get">
+            <button>Back To all Jobs</button>
+      </form>
+
+</div>
 {{/if}}
 
 {{#if nullJob}}
