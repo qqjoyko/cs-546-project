@@ -36,3 +36,27 @@ npm start
 ```
 
 After that, you can access our website through [http://localhost:3000](http://localhost:3000)
+
+## Features
+
+### Main Page
+
+- All users and recruiters and view the main page.
+  - Users `logged in` can view specific job page
+  - For privacy, recruiters cannot view single job page, they can only access their posted job via their profile page
+- A `search bar` used for filter keywords
+- A `Recent jobs` button for resort jobs
+
+### User
+
+- Basic `sign up` and `login`
+- Users can `update` their profile in their main page
+- Users must `upload` their resume then `apply` for jobs, otherwise when they apply a job, it will show a link redirect them to upload resume page
+- Users can apply and `save` jobs, they can view them in their profile page or on the top-right buttons, they also can `cancel` or `remove` jobs from those pages
+
+### Recruiter
+
+- Basic `sign up` and `login`
+- They can `update` their profile and `post` job using buttons in their profile page
+- In their profile page, they can view applicants for their `posted` jobs
+- They can `accept`, `reject` and `view` applicants' resumes from their profile page
