@@ -298,6 +298,7 @@ async function updateProfile(recruiterId, profile) {
         } 
       else {
         
+        company = {name, position, description};
         let recId = new ObjectId(recruiter.data._id);
         let updatedProfile = {
           gender: gender,
@@ -478,9 +479,11 @@ async function rejectDecision(recruiterId, applicantId, jobId) {
             let recAppUpdate = await recruiterCol.updateOne({_id: new ObjectId(recruiterId)}, {$set: {"jobs.$[job].applicants.$[app].status": "Rejected"}}, {arrayFilters: [{"app.appId": {$eq: applicantId}},{"job.job_id": jobId}]});
             if(recAppUpdate.modifiedCount === 1){
               let applicant = await userCol.updateOne({$and: [{_id: applicantId, "jobs._id": jobId}]},{$set: {"jobs.$.status": "Rejected"}});
-              if(applicant.modifiedCount === 1) {
-                return "Rejected";
-              }else throw new CustomError(500,"Rejection error");
+              if(applicant.matchedCount === 1) {
+                if(applicant.modifiedCount === 1) {
+                  return "Rejected";
+                }else throw new CustomError(500,"The application has been rejected already.");
+              }
           }else throw new CustomError(500,"Rejection error");
         } else throw new CustomError(403,"Recruiter does not have this job");
       } else throw new CustomError(400,"Recruiter is not present in the database");

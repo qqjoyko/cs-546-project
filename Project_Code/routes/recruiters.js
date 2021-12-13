@@ -78,7 +78,7 @@ router.post("/login", async (req, res) => {
       let recId = output.id;
       req.session.user = { email: email, type: "recruiter", id: recId };
       // doe for redirection of urls
-      return res.redirect("/recruiters/");
+      return res.redirect("/recruiters");
     }
   } catch (e) {
     return res.status(400).send({ message: e.message, mainerr: true });
@@ -100,8 +100,8 @@ router.get("/checkResume/:jobId/:appId", async (req, res) => {
   try {
     var fileId = await users.getResume(req.params.appId, req.params.jobId);
   } catch (e) {
-    return res.render("pages/error", { message: e.message });
-    // console.log(e);
+    return res.render("/pages/error", { message: e.message });
+    console.log(e);
   }
 
   try {
@@ -147,8 +147,8 @@ router.get("/accept/:jobId/:appId", async (req, res) => {
     let recruiterId = req.session.user.id;
     let applicantId = req.params.appId;
     let jobId = req.params.jobId;
-    // console.log(jobId);
-    // console.log(applicantId);
+    //console.log(jobId);
+    //console.log(applicantId);
     // if(!req.session.user) {
     //     return res.status(403).render('pages/loginform', {, message: "Unauthorized Access", err: true})
     // } else {
@@ -173,7 +173,7 @@ router.get("/accept/:jobId/:appId", async (req, res) => {
     }
     // }
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res
       .status(e.status)
       .render("pages/loginform", { message: e.message, err: true });
@@ -198,8 +198,8 @@ router.get("/reject/:jobId/:appId", async (req, res) => {
     let recruiterId = req.session.user.id;
     let applicantId = req.params.appId;
     let jobId = req.params.jobId;
-    // console.log(jobId);
-    // console.log(applicantId);
+    //console.log(jobId);
+    //console.log(applicantId);
     // if(!req.session.user) {
     //     return res.status(403).render('pages/loginform', {, message: "Unauthorized Access", err: true})
     // } else {
@@ -357,12 +357,12 @@ router.get("/", async (req, res) => {
         recruiter.data.jobs.map(async (e) => {
           if (e.applicants.length != 0) {
             let applicantList = [];
-            await e.applicants.map(async (e) => {
+            await Promise.all(e.applicants.map(async (e) => {
               let appId = e.appId.toString();
               let appDetails = await usrDat.get(appId);
               appDetails._id = appDetails._id.toString();
               applicantList.push(appDetails);
-            });
+            }));
 
             e["applicants"] = applicantList;
           }
@@ -371,19 +371,18 @@ router.get("/", async (req, res) => {
           e["jobDetails"] = job;
 
           e.job_id = e.job_id.toString();
-          // console.log(e);
-          // console.log(e.applicants[0].jobs);
         })
       );
+      return res.render("pages/recruiterProfile", {
+        recruiter: recruiter.data,
+        jobs: recruiter.data.jobs,
+        recid: id,
+        newRec: newRec
+      });
     } catch (e) {
       console.log(e);
     }
-    return res.render("pages/recruiterProfile", {
-      recruiter: recruiter.data,
-      jobs: recruiter.data.jobs,
-      recid: id,
-      newRec: newRec,
-    });
+    
   }
 });
 
@@ -410,7 +409,7 @@ router.get("/profile", async (req, res) => {
 
     if (ObjectId.isValid(id)) {
       let recruiter = await recruiterDat.getRecruiter(id);
-      // console.log(recruiter);
+      //console.log(recruiter);
       if (Object.keys(recruiter.data.profile).length != 0) {
         return res.render("pages/recruitereditprofile", {
           title: "Update",
@@ -475,7 +474,7 @@ router.get("/jobs/update/:id", async (req, res) => {
     let id = req.params.id;
     if (ObjectId.isValid(id)) {
       let job = await jobDat.getJobsById(id);
-      // console.log(job);
+      //console.log(job);
       if (job) {
         return res.render("pages/jobpost", {
           title: "Update",
@@ -511,17 +510,26 @@ router.post("/profile/create", async (req, res) => {
   let re = /[A-Z]/i;
   if (gender == "" || gender == undefined)
     return res.status(400).render("pages/recruitereditprofile", {
-      message: "Please enter your gender.",
-      genErr: true,
+        title: "Create",
+        method: "POST",
+        action: "create",
+        message: "Please enter your gender.",
+        genErr: true,
     });
   gender = gender.trim();
   if (!re.test(gender))
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Your gender should not contain special characters.",
       genErr: true,
     });
   if (gender.length != 1)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter a valid gender.",
       genErr: true,
     });
@@ -530,33 +538,51 @@ router.post("/profile/create", async (req, res) => {
   let re2 = /[A-Z]+[ |.]?[A-Z]*/i;
   if (company == "" || company == undefined)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter your place of work.",
       compNameErr: true,
     });
   company = company.trim();
   if (!re2.test(company))
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: `${company} is not a valid company.`,
       compNameErr: true,
     });
   if (company.length < 3)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter a valid company.",
       compNameErr: true,
     });
   if (position == "" || position == undefined)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter your position.",
       comPosErr: true,
     });
   position = position.trim();
   if (!re2.test(position))
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: `${position} is not a valid position at ${company}.`,
       comPosErr: true,
     });
   if (position.length < 3)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter a valid position.",
       comPosErr: true,
     });
@@ -565,33 +591,51 @@ router.post("/profile/create", async (req, res) => {
   let re3 = /[A-Z]+[ ]?[A-Z]*[ ]?[A-Z]*/i;
   if (city == "" || city == undefined)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter your city of work.",
       cityErr: true,
     });
   city = city.trim();
   if (!re3.test(city))
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: `${city} is not a valid city.`,
       cityErr: true,
     });
   if (city.length < 3)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter a valid gender.",
       cityErr: true,
     });
   if (state == "" || state == undefined)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter your state of work.",
       stateErr: true,
     });
   state = state.trim();
   if (!re3.test(state))
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: `${state} is not a valid state.`,
       stateErr: true,
     });
   if (state.length < 2)
     return res.status(400).render("pages/recruitereditprofile", {
+        title: "Create",
+          method: "POST",
+          action: "create",
       message: "Please enter a valid state.",
       stateErr: true,
     });
@@ -599,7 +643,7 @@ router.post("/profile/create", async (req, res) => {
     if (ObjectId.isValid(id)) {
       let profile = {
         gender: gender.toUpperCase(),
-        /*"photo": photo,*/ city: city,
+        city: city,
         state: state,
         company: {
           position: position,
@@ -618,7 +662,7 @@ router.post("/profile/create", async (req, res) => {
       });
     }
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res
       .status(e.status)
       .render("pages/recruitereditprofile", { message: e.message, err: true });
@@ -639,7 +683,7 @@ router.post("/profile/update", async (req, res) => {
     }
   }
   let id = req.session.user.id;
-  let { gender, /* photo,*/ city, state, company, position, description } =
+  let { gender, city, state, company, position, description } =
     req.body;
 
   //gender validation
@@ -647,17 +691,26 @@ router.post("/profile/update", async (req, res) => {
     let re = /[A-Z]/i;
     if (gender == "" || gender == undefined)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter your gender.",
         genErr: true,
       });
     gender = gender.trim();
     if (!re.test(gender))
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Your gender should not contain special characters.",
         genErr: true,
       });
     if (gender.length != 1)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter a valid gender.",
         genErr: true,
       });
@@ -668,12 +721,18 @@ router.post("/profile/update", async (req, res) => {
   if (company) {
     if (company == "" || company == undefined)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter your place of work.",
         compNameErr: true,
       });
     company = company.trim();
     if (!re2.test(company))
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: `${company} is not a valid company.`,
         compNameErr: true,
       });
@@ -683,17 +742,26 @@ router.post("/profile/update", async (req, res) => {
   if (position) {
     if (position == "" || position == undefined)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter your position.",
         comPosErr: true,
       });
     position = position.trim();
     if (!re2.test(position))
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: `${position} is not a valid position at ${company}.`,
         comPosErr: true,
       });
     if (position.length < 3)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: `Please enter a valid position.`,
         comPosErr: true,
       });
@@ -704,17 +772,26 @@ router.post("/profile/update", async (req, res) => {
   if (city) {
     if (city == "" || city == undefined)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter your city of work.",
         cityErr: true,
       });
     city = city.trim();
     if (!re3.test(city))
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: `${city} is not a valid city.`,
         cityErr: true,
       });
     if (city.length < 3)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter a valid city.",
         cityErr: true,
       });
@@ -724,17 +801,26 @@ router.post("/profile/update", async (req, res) => {
   if (state) {
     if (state == "" || state == undefined)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter your state of work.",
         stateErr: true,
       });
     state = state.trim();
     if (!re3.test(state))
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: `${state} is not a valid state.`,
         stateErr: true,
       });
     if (state.length < 2)
       return res.status(400).render("pages/recruitereditprofile", {
+        title: "Update",
+        method: "POST",
+        action: "update",
         message: "Please enter a valid state.",
         stateErr: true,
       });
@@ -748,9 +834,11 @@ router.post("/profile/update", async (req, res) => {
       company: { name: company, position: position, description: description },
     };
     if (ObjectId.isValid(id)) {
-      // console.log(recProfile);
+      //console.log(recProfile);
       let output = await recruiterDat.updateProfile(id, recProfile);
-      return res.redirect("/recruiters/");
+      if(output) {
+          return res.redirect("/recruiters/");
+      }
     } else {
       return res.status(400).render("pages/recruitereditprofile", {
         message: "Invalid Recruiter ID",
@@ -758,10 +846,15 @@ router.post("/profile/update", async (req, res) => {
       });
     }
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res
       .status(e.status)
-      .render("pages/recruitereditprofile", { message: e.message, err: true });
+      .render("pages/recruitereditprofile", { 
+        title: "Update",
+        method: "POST",
+        action: "update",
+        message: e.message,
+        err: true });
   }
   // }
 });
@@ -805,14 +898,14 @@ router.post("/jobs/new", async (req, res) => {
       return res.redirect("/recruiters/login");
     }
   }
-  // console.log(req.body);
+  //console.log(req.body);
   let id = req.session.user.id;
   let {
     title,
     jobType,
     company,
     city,
-    state /*, postDate*/,
+    state,
     jobExpiry,
     summary,
     description,
@@ -864,8 +957,6 @@ router.post("/jobs/new", async (req, res) => {
     });
 
   let currentDay = new Date();
-  // if(!postDate|| typeof postDate !== 'object') return res.status(400).render('pages/jobpost', {message: `please provide a valid post date`});
-  // if(!jobExpiry || +jobExpiry < +currentDay.toISOString().split('T')[0]) return res.status(400).render('pages/jobpost', {message: `please provide a valid expiry date`, jobExp: true});
   jobTags = jobTags.split(",");
   if (parseInt(jobMinPay) > parseInt(jobMaxPay))
     return res.status(400).render("pages/jobpost", {
@@ -888,14 +979,13 @@ router.post("/jobs/new", async (req, res) => {
       payrange,
     };
     let output = await recruiterDat.postJob(id, jobDetails);
-    // console.log("I am here", output);
 
     if (output) {
       return res.redirect("/recruiters");
     }
     // }
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res
       .status(e.status)
       .render("pages/jobpost", { message: e.message, mainErr: true });
@@ -1031,7 +1121,7 @@ router.get("/jobs/delete/:id", async (req, res) => {
       }
     }
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res
       .status(e.status)
       .render("pages/rec", { message: e.message, err: true });
