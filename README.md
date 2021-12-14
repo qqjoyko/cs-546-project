@@ -22,10 +22,10 @@ This function are organized as following:
 
 1. First it will drop the whole database of `jobHunt`
 2. Next by default, it will create 6 `recruiters`, 20 `applicants`, and each recruiter will have 5 `jobs`. (You can change it by changing the last line of seed.js file)
+3. At last, we randomly generate the number(n) of applicants for each job. For simplicity and test, we let the first n applicants apply for this job such that the first applicant in the database will apply for most of jobs.
+4. After seeding, we output account and password to a json file. you can find emails and passwords used to log in the website for both applicants and recruiters, in `/task/users.json` and `/task/recruiter.json`.
 
 Note that we don't offer seeding database with applicants' resumes, we just use a auxiliary function to allow the users to apply jobs in seed process. However, in real case, a user must upload at least a resume before applying for a job. As a result, you can't view applicants' resume in recruiters' side after seeding, it will reveal "resume not found".
-
-After seeding, you can find emails and passwords used to log in the website for both users and recruiters, in `/task/users.json` and `/task/recruiter.json`.
 
 ## Start the website
 
